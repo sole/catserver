@@ -1,0 +1,36 @@
+{
+  "name": "catserver",
+  "version": "1.0.0",
+  "description": "the internet of cats",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+	"build": "gulp build",
+	"install": "gulp build && gulp install"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/sole/catserver"
+  },
+  "keywords": [
+    "echo",
+    "servers",
+    "mdns"
+  ],
+  "author": "sole",
+  "license": "Apache 2",
+  "bugs": {
+    "url": "https://github.com/sole/catserver/issues"
+  },
+  "homepage": "https://github.com/sole/catserver",
+  "dependencies": {
+    "dns-sd.js": "git+https://github.com/justindarc/dns-sd.js.git",
+    "fxos-web-server": "git+https://github.com/sole/fxos-web-server.git",
+    "gulp": "^3.8.11",
+    "gulp-browserify": "^0.5.1",
+    "gulp-jshint": "^1.10.0",
+    "gulp-rename": "^1.2.2",
+    "gulp-replace": "^0.5.3",
+    "yargs": "^3.7.0"
+  }
+}
