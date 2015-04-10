@@ -5,8 +5,8 @@
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-	"build": "gulp build",
-	"install": "gulp build && gulp install"
+    "build": "gulp build",
+    "install": "gulp build && gulp install"
   },
   "repository": {
     "type": "git",
@@ -26,6 +26,7 @@
   "dependencies": {
     "dns-sd.js": "git+https://github.com/justindarc/dns-sd.js.git",
     "fxos-web-server": "git+https://github.com/sole/fxos-web-server.git",
+    "get-network-info": "^1.0.0",
     "gulp": "^3.8.11",
     "gulp-browserify": "^0.5.1",
     "gulp-jshint": "^1.10.0",

@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
-  "name": "echoipsum",
-  "description": "an echo server / client exercise",
+  "name": "catserver",
+  "description": "meow!",
   "launch_path": "/index.html",
   "icons": {
     "16": "/img/icons/icon16x16.png",
@@ -16,7 +16,7 @@
   "type": "certified",
   "permissions": {
     "wifi-manage": {
-      "description": "To tinker"
+      "description": "show current ip etc"
     },
 	"tcp-socket": {},
     "udp-socket": {}
