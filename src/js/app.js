@@ -7,9 +7,10 @@ window.addEventListener('load', function() {
   var divInfo = document.getElementById('info'); 
 
   // network info
-  getNetworkInfo().then(info => {
+  var info = getNetworkInfo();
+  if(info) {
 	  divInfo.innerHTML = `<strong>${info.ip}</strong>`;
-  });
+  }
 
   // requests below
 
