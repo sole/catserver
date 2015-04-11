@@ -17,7 +17,7 @@ gulp.task('lint', function() {
     .pipe(jshint.reporter('default'));
 });
 
-gulp.task('build', ['build-manifest', 'build-js', 'build-html', 'build-css', 'build-img']);
+gulp.task('build', ['build-manifest', 'build-js', 'build-html', 'build-css', 'build-img', 'build-www']);
 
 gulp.task('build-manifest', function() {
   return gulp.src('src/manifest.webapp')
@@ -46,5 +46,10 @@ gulp.task('build-css', function() {
 gulp.task('build-img', function() {
   return gulp.src('src/img/**/*')
     .pipe(gulp.dest('./build/img'));
+});
+
+gulp.task('build-www', function() {
+  return gulp.src('www/**/*')
+    .pipe(gulp.dest('./build/www'));
 });
 
