@@ -16,6 +16,8 @@ Then `npm run build`
 
 Then you can install the app using WebIDE or `install-to-adb` for example. You need to run this on a phone as the simulator doesn't seem to let you do the cool stuff (Web NFC, TCP sockets).
 
+**NOTE THAT YOU NEED A ROOTED PHONE** to install certified apps like this one.
+
 I do all with just one line:
 
 ```bash
@@ -29,3 +31,4 @@ Actually, TODO: does the simulator let you open sockets?
 -->
 
 Once the app is built and deployed to a device you will get the IP address of the device on screen. If the device has NFC disabled you should get a message on the screen. Otherwise if you touch another NFC-enabled device, the first device (the *server*) will send its URL to the second device, and it generally will open a browser and you will get CATS!
+
