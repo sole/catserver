@@ -2,6 +2,8 @@
 
 > Cute cat animated GIFs. STRAIGHT TO YOUR BROWSER.
 
+![catserver icon](./src/img/icons/256.png)
+
 AKA: An NFC-enabled front-end run web server that runs on Firefox OS devices, entirely JavaScript powered.
 
 [Video demo](https://www.youtube.com/watch?v=uAThqeOi0yw)
@@ -32,3 +34,6 @@ Actually, TODO: does the simulator let you open sockets?
 
 Once the app is built and deployed to a device you will get the IP address of the device on screen. If the device has NFC disabled you should get a message on the screen. Otherwise if you touch another NFC-enabled device, the first device (the *server*) will send its URL to the second device, and it generally will open a browser and you will get CATS!
 
+## Credits
+
+Thanks to [Guillaume](http://github.com/gmarty) for the happy cheerful icon!
