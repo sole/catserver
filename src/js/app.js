@@ -8,70 +8,79 @@ window.addEventListener('load', function() {
   var divInfo = document.getElementById('info');
   var divMessages = document.getElementById('messages');
 
+  displayNetworkInfo();
+  setupWebServer();
 
-  // network info
-  var info = getNetworkInfo();
-  if(info) {
-    divInfo.innerHTML = `<strong>${info.ip}</strong>`;
-  } else {
-    divInfo.innerHTML = 'UH OH';
+  // ---
+
+  function displayNetworkInfo() {
+    var info = getNetworkInfo();
+    if(info) {
+      divInfo.innerHTML = `<strong>${info.ip}</strong>`;
+    } else {
+      divInfo.innerHTML = 'UH OH';
+    }
   }
 
-  // setting up server
-  var server = new HTTPServer(80);
 
-  server.addEventListener('request', function(evt) {
-    var request = evt.request;
-    var response = evt.response;
+  function setupWebServer() {
 
-    log('requested? ' + request.path);
+    var server = new HTTPServer(80);
 
-    if (request.path.substr(-1) === '/') {
-      request.path = request.path.substring(0, request.path.length - 1);
-    }
+    server.addEventListener('request', function(evt) {
+      var request = evt.request;
+      var response = evt.response;
 
-    var path = decodeURIComponent(request.path) || '/';
-    var wwwPath = WWW + path;
-    var fileToSend = wwwPath;
-    
-    log('p... ' + path);
+      log('requested? ' + request.path);
 
-    // It's a dir
-    if(path.substr(-1) === '/') {
-      // TODO: actually implement this logic-need a way to catch fails in response (or do it without sendFile)
-      // is there an index.html in that directory?
-      //    yes? serve it
-      //    no? return 403
+      if (request.path.substr(-1) === '/') {
+        request.path = request.path.substring(0, request.path.length - 1);
+      }
 
-      fileToSend = wwwPath + 'index.html';
+      var path = decodeURIComponent(request.path) || '/';
+      var wwwPath = WWW + path;
+      var fileToSend = wwwPath;
       
-    } 
-    
-    // TODO how to detect if the file doesn't exist & return 404?
+      log('p... ' + path);
 
-    var t0;
-    log('will send ' + fileToSend);
-    response.addEventListener('complete', function(e) {
-      var now = Date.now();
-      var elapsedTime = ((now - t0) * 0.001).toFixed(2);
-      log(fileToSend + ': response complete ' + elapsedTime + ' seconds');
+      // It's a dir
+      if(path.substr(-1) === '/') {
+        // TODO: actually implement this logic-need a way to catch fails in response (or do it without sendFile)
+        // is there an index.html in that directory?
+        //    yes? serve it
+        //    no? return 403
+
+        fileToSend = wwwPath + 'index.html';
+        
+      } 
+      
+      // TODO how to detect if the file doesn't exist & return 404?
+
+      var t0;
+      log('will send ' + fileToSend);
+      response.addEventListener('complete', function(e) {
+        var now = Date.now();
+        var elapsedTime = ((now - t0) * 0.001).toFixed(2);
+        log(fileToSend + ': response complete ' + elapsedTime + ' seconds');
+      });
+
+      response.headers['Content-Type'] = getContentType(fileToSend);
+      t0 = Date.now();
+      response.sendFile(fileToSend); // how to detect if the file doesn't exist & return 404?
+
+      
     });
 
-    response.headers['Content-Type'] = getContentType(fileToSend);
-    t0 = Date.now();
-    response.sendFile(fileToSend); // how to detect if the file doesn't exist & return 404?
+    server.start(); // TODO is this sync? do we get errors returned?
 
-    
-  });
+    log('server up? ' + server.running);
 
-  server.start(); // TODO is this sync? do we get errors returned?
+    window.addEventListener('beforeunload', function() {
+      console.log('STOPPING SERVER');
+      server.stop();
+    });
 
-  log('server up? ' + server.running);
-
-  window.addEventListener('beforeunload', function() {
-    console.log('STOPPING SERVER');
-    server.stop();
-  });
+  }
 
   function log(message) {
     divMessages.innerHTML += message + '<br />';
@@ -107,7 +116,7 @@ window.addEventListener('load', function() {
   function getExtension(filePath) {
     var parts = filePath.split('.');
     if(parts.length < 2) {
-      return "";
+      return '';
     } else {
       return parts.pop();
     }
