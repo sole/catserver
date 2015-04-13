@@ -31,25 +31,37 @@ window.addEventListener('load', function() {
     }
 
     var path = decodeURIComponent(request.path) || '/';
+    var wwwPath = WWW + path;
+    var fileToSend = wwwPath;
+    
     log('p... ' + path);
 
     // It's a dir
     if(path.substr(-1) === '/') {
+      // TODO: actually implement this logic-need a way to catch fails in response (or do it without sendFile)
       // is there an index.html in that directory?
       //    yes? serve it
       //    no? return 403
-      response.send('NO DIRS FOR YOU');
-    } else {
-      // Find full path in www
-      var wwwPath = WWW + path;
-      log('www ' + wwwPath);
 
-      response.headers['Content-Type'] = 'image/gif'; // TODO unhardcode this
-      response.sendFile(wwwPath); // how to detect if the file doesn't exist & return 404?
-    }
+      fileToSend = wwwPath + 'index.html';
+      
+    } 
     
-    //var result = `requested: ${request.path}, thank you`;
-    //response.send(result);
+    // TODO how to detect if the file doesn't exist & return 404?
+
+    var t0;
+    log('will send ' + fileToSend);
+    response.addEventListener('complete', function(e) {
+      var now = Date.now();
+      var elapsedTime = ((now - t0) * 0.001).toFixed(2);
+      log(fileToSend + ': response complete ' + elapsedTime + ' seconds');
+    });
+
+    response.headers['Content-Type'] = getContentType(fileToSend);
+    t0 = Date.now();
+    response.sendFile(fileToSend); // how to detect if the file doesn't exist & return 404?
+
+    
   });
 
   server.start(); // TODO is this sync? do we get errors returned?
@@ -57,11 +69,48 @@ window.addEventListener('load', function() {
   log('server up? ' + server.running);
 
   window.addEventListener('beforeunload', function() {
+    console.log('STOPPING SERVER');
     server.stop();
   });
 
   function log(message) {
     divMessages.innerHTML += message + '<br />';
+    console.log(message);
+  }
+
+  function getContentType(filePath) {
+
+    var extension = getExtension(filePath);
+    var extToType = {
+      'gif': 'image/gif',
+      'jpg': 'image/jpg',
+      'css': 'text/stylesheet',
+      'js': 'text/javascript',
+      'html': 'text/html'
+    };
+
+    log(filePath + ' -- ' + extension);
+
+    if(extension.length > 0) {
+      var type = extToType[extension];
+      log('Content type of ' + filePath + ' is ' + type);
+      if(type !== undefined) {
+        return type;
+      }
+    }
+
+    // falling back to text/html
+    return 'text/html';
+
+  }
+
+  function getExtension(filePath) {
+    var parts = filePath.split('.');
+    if(parts.length < 2) {
+      return "";
+    } else {
+      return parts.pop();
+    }
   }
 
 });
