@@ -4,19 +4,28 @@ window.addEventListener('load', function() {
 
   var getNetworkInfo = require('get-network-info');
   var HTTPServer = require('fxos-web-server');
-  var WWW = 'www';
+  
+  // TODO: URGH this is registering things in window but I have no time to
+  // change it now.
+  require('./lib/NDEFHelper.js');
+
+  const WWW = 'www';
+  var myIP = false;
   var divInfo = document.getElementById('info');
   var divMessages = document.getElementById('messages');
 
   displayNetworkInfo();
   setupWebServer();
+  startNFCServer();
 
+  
   // ---
 
   function displayNetworkInfo() {
     var info = getNetworkInfo();
     if(info) {
-      divInfo.innerHTML = `<strong>${info.ip}</strong>`;
+      myIP = info.ip;
+      divInfo.innerHTML = `${info.networkName} - <strong>${myIP}</strong>`;
     } else {
       divInfo.innerHTML = 'UH OH';
     }
@@ -76,10 +85,57 @@ window.addEventListener('load', function() {
     log('server up? ' + server.running);
 
     window.addEventListener('beforeunload', function() {
-      console.log('STOPPING SERVER');
+      console.log('STOPPING WWW SERVER');
       server.stop();
     });
 
+  }
+
+
+  function startNFCServer() {
+    var mozNfc = window.navigator.mozNfc;// TODO change var name
+
+    // TODO: if "access": "readwrite" is in the nfc permissions field we...
+    // don't have access to the API! which makes no sense?
+    if(!mozNfc) {
+      console.error('NFC API not available');
+    } else {
+      log('NFC available');
+    }
+
+    if(!mozNfc.enabled) {
+      log('NFC is available, but not enabled');
+    }
+
+    mozNfc.onpeerfound = onNFCPeerFound;
+
+    window.addEventListener('beforeunload', function() {
+      console.log('STOPPING NFC SERVER');
+      stopNFCServer();
+    });
+  }
+
+  function stopNFCServer() {
+    window.navigator.mozNfc.onpeerfound = null;
+  }
+
+
+  // TODO note that peers can't be found if the screen is locked
+  // (I presume for security)
+  function onNFCPeerFound(e) {
+    console.log('NFC PEER!!!', e.peer);
+
+    var peer = e.peer;
+    var url = 'http://' + myIP;
+    var ndefHelper = new NDEFHelper();
+    var record = ndefHelper.createURI(url);
+
+    log('sending ' + url);
+    peer.sendNDEF([record]).then(() => {
+      log('SENT URL ' + url);
+    }).catch((err) => {
+      log('NFC ERROR: ' + err);
+    });
   }
 
   function log(message) {
