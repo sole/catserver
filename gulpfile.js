@@ -8,6 +8,7 @@ var replace = require('gulp-replace');
 var yargs = require('yargs');
 var path = require('path');
 var fs = require('fs');
+var shell = require('gulp-shell');
 
 var appPath = path.join(__dirname, 'build');
 
@@ -52,4 +53,8 @@ gulp.task('build-www', function() {
   return gulp.src('www/**/*')
     .pipe(gulp.dest('./build/www'));
 });
+
+gulp.task('install', shell.task([
+  'install-to-adb build/ --launch'
+]));
 
